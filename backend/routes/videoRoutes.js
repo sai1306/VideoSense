@@ -11,7 +11,18 @@ const { protect, authorize } = require('../middleware/authMiddleware');
 const upload = require('../utilities/multerConfig');
 
 // Protected Routes
-router.post('/upload', protect, authorize('editor', 'admin'), upload.single('video'), uploadVideo);
+router.post('/upload', protect, authorize('editor', 'admin'), (req, res, next) => {
+  upload.single('video')(req, res, (err) => {
+    if (err) {
+      if (err instanceof require('multer').MulterError) {
+        return res.status(400).json({ message: `Upload error: ${err.message}` });
+      } else if (err) {
+        return res.status(400).json({ message: err.message });
+      }
+    }
+    next();
+  });
+}, uploadVideo);
 router.get('/', protect, getVideos);
 router.get('/:id', protect, getVideoById);
 router.delete('/:id', protect, authorize('editor', 'admin'), deleteVideo);

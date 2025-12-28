@@ -31,7 +31,7 @@ export default function Navbar() {
                         )}
                         <div className="dropdown dropdown-end">
                             <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar placeholder">
-                                <div className="bg-neutral text-neutral-content rounded-full w-10">
+                                <div className="bg-neutral text-neutral-content rounded-full w-8">
                                     <span className="text-xl">{user?.email?.[0]?.toUpperCase() || 'U'}</span>
                                 </div>
                             </div>

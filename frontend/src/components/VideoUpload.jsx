@@ -61,14 +61,14 @@ const VideoUpload = ({ onUploadSuccess }) => {
   return (
     <div className="card w-full bg-base-100 shadow-xl border border-base-200">
       <div className="card-body">
-        <h2 className="card-title text-primary">Upload New Video</h2>
+        <h2 style={{ fontSize: "1.5rem" }} className="card-title text-primary">Upload New Video</h2>
 
         <div className="form-control w-full">
           <label className="label"><span className="label-text">Video Title</span></label>
           <input
             type="text"
             placeholder="Enter video title"
-            className="input input-bordered w-full"
+            className="p-2 input input-bordered w-full"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />

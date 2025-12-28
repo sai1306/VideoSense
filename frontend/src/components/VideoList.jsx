@@ -13,10 +13,13 @@ export default function VideoList({ refresh }) {
   const [filters, setFilters] = useState({
     safetyStatus: '',
     category: '',
-    category: '',
     startDate: '',
     endDate: '',
     myVideos: '', // '' = all, 'true' = my videos
+    minSize: '',
+    maxSize: '',
+    minDuration: '',
+    maxDuration: '',
   });
 
   useEffect(() => {
@@ -51,9 +54,14 @@ export default function VideoList({ refresh }) {
 
   const fetchVideos = async () => {
     try {
-      // Remove empty filters
+      // Remove empty filters and convert units
       const params = Object.fromEntries(
-        Object.entries(filters).filter(([_, v]) => v !== '')
+        Object.entries(filters)
+          .filter(([_, v]) => v !== '')
+          .map(([k, v]) => {
+            if (k === 'minSize' || k === 'maxSize') return [k, Number(v) * 1024 * 1024]; // MB to Bytes
+            return [k, v];
+          })
       );
       const res = await api.get("/api/videos", { params });
       setVideos(res.data);
@@ -160,11 +168,51 @@ export default function VideoList({ refresh }) {
               />
             </div>
 
+            {/* Size Filters */}
+            <div className="form-control">
+              <label className="label"><span className="label-text">Min Size (MB)</span></label>
+              <input
+                type="number"
+                className="input input-bordered input-sm w-full"
+                value={filters.minSize}
+                onChange={(e) => setFilters({ ...filters, minSize: e.target.value })}
+              />
+            </div>
+            <div className="form-control">
+              <label className="label"><span className="label-text">Max Size (MB)</span></label>
+              <input
+                type="number"
+                className="input input-bordered input-sm w-full"
+                value={filters.maxSize}
+                onChange={(e) => setFilters({ ...filters, maxSize: e.target.value })}
+              />
+            </div>
+
+            {/* Duration Filters */}
+            <div className="form-control">
+              <label className="label"><span className="label-text">Min Duration (sec)</span></label>
+              <input
+                type="number"
+                className="input input-bordered input-sm w-full"
+                value={filters.minDuration}
+                onChange={(e) => setFilters({ ...filters, minDuration: e.target.value })}
+              />
+            </div>
+            <div className="form-control">
+              <label className="label"><span className="label-text">Max Duration (sec)</span></label>
+              <input
+                type="number"
+                className="input input-bordered input-sm w-full"
+                value={filters.maxDuration}
+                onChange={(e) => setFilters({ ...filters, maxDuration: e.target.value })}
+              />
+            </div>
+
             {/* Reset Button */}
-            <div className="form-control md:col-span-5 flex justify-end">
+            <div className="form-control md:col-span-1 lg:col-span-5 flex justify-end">
               <button
                 className="btn btn-ghost btn-sm"
-                onClick={() => setFilters({ safetyStatus: '', category: '', startDate: '', endDate: '', myVideos: '' })}
+                onClick={() => setFilters({ safetyStatus: '', category: '', startDate: '', endDate: '', myVideos: '', minSize: '', maxSize: '', minDuration: '', maxDuration: '' })}
               >
                 Clear Filters
               </button>

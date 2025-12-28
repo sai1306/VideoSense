@@ -17,11 +17,18 @@ const s3 = new S3Client({
 // @route   POST /api/videos/upload
 // @access  Private (Editor, Admin)
 const uploadVideo = async (req, res) => {
-    if (!req.file) {
-        return res.status(400).json({ message: 'No file uploaded' });
+    const { title, description, category, visibility } = req.body;
+
+    if (!title || title.trim() === '') {
+        if (req.file && fs.existsSync(req.file.path)) {
+            fs.unlinkSync(req.file.path);
+        }
+        return res.status(400).json({ message: 'Title is required' });
     }
 
-    const { title, description, category, visibility } = req.body;
+    if (!req.file) {
+        return res.status(400).json({ message: 'Video file is required' });
+    }
 
     try {
         // Upload to S3

@@ -22,14 +22,17 @@ const storage = multer.diskStorage({
 
 // File filter (Video only)
 const fileFilter = (req, file, cb) => {
-    const allowedTypes = /mp4|mov|avi|mkv/;
-    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = allowedTypes.test(file.mimetype);
+    const allowedExtensions = ['.mp4', '.mov', '.avi', '.mkv'];
+    const allowedMimeTypes = ['video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/x-matroska'];
 
-    if (extname && mimetype) {
-        return cb(null, true);
+    const ext = path.extname(file.originalname).toLowerCase();
+    const isExtensionAllowed = allowedExtensions.includes(ext);
+    const isMimeTypeAllowed = allowedMimeTypes.includes(file.mimetype);
+
+    if (isExtensionAllowed && isMimeTypeAllowed) {
+        cb(null, true);
     } else {
-        cb(new Error('Only video files are allowed!'));
+        cb(new Error(`Unsupported file format (${ext}). Allowed: ${allowedExtensions.join(', ')}`), false);
     }
 };
 
